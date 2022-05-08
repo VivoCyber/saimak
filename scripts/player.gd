@@ -3,13 +3,14 @@ extends KinematicBody
 export var speed:= 7.0
 export var jump_strength := 20.0
 export var gravity := 50.0
+export var character_height:= 1.8
 
 var _velocity := Vector3.ZERO
 var _snap_vector := Vector3.DOWN
 
-onready var _spring_arm = $SpringArm
-onready var _model = $bot
-
+onready var _spring_arm = get_node("SpringArm")
+onready var _model = $skin_position
+onready var label =$label
 
 
 func _physics_process(delta : float) -> void:
@@ -29,23 +30,21 @@ func _physics_process(delta : float) -> void:
 		_snap_vector = Vector3.ZERO
 	elif is_landed:
 		_snap_vector = Vector3.DOWN
-		_velocity = move_and_slide_with_snap(_velocity,_snap_vector,Vector3.UP,true)
 
-
-
+	_velocity = move_and_slide_with_snap(_velocity,_snap_vector,Vector3.UP,true)
 
 	if _velocity.length() > 0.2:
 		var look_direction = Vector2(_velocity.z, _velocity.x)
 		_model.rotation.y =look_direction.angle()
 
 func _process(_delta)->void:
-	_spring_arm.translation=translation
+	_spring_arm.translation=Vector3(translation.x,translation.y + character_height,translation.z)
+	
+	#label.text = str(_delta)
+	#print(str(_spring_arm.translation.y))
+	
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+
+
